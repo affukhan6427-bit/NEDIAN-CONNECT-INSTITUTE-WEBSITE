@@ -1,16 +1,19 @@
 import React, { useState } from 'react';
-import { ArrowRight, CheckCircle2, Gift, Sparkles, Monitor, Users, Clock, Award } from 'lucide-react';
+import { ArrowRight, CheckCircle2, Gift, Sparkles, Monitor, Users, Clock, Award, Calendar } from 'lucide-react';
 import { motion } from 'motion/react';
 import { useTheme } from '../context/ThemeContext';
+import { InstituteInfo } from '../types';
 
 interface HeroSectionProps {
   onExploreCourses: () => void;
   onOpenInquiry: () => void;
+  instituteInfo?: InstituteInfo;
 }
 
 export const HeroSection: React.FC<HeroSectionProps> = ({
   onExploreCourses,
   onOpenInquiry,
+  instituteInfo,
 }) => {
   const [imageError, setImageError] = useState(false);
   const { config } = useTheme();
@@ -33,34 +36,43 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
           >
             
             {/* Highlight Banner / Admission Kicker */}
-            <motion.div 
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.1, duration: 0.4 }}
-              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-100/90 border border-emerald-300 text-emerald-900 text-xs sm:text-sm font-semibold shadow-xs"
-            >
-              <Gift className="w-4 h-4 text-emerald-700 shrink-0" />
-              <span>Admissions Open 2026–2027</span>
-              <span className="text-emerald-400 font-bold" aria-hidden="true">·</span>
-              <span className="text-emerald-800 font-medium">Free Bag &amp; Smart ID Card Included</span>
-            </motion.div>
+            <div className="flex flex-wrap items-center gap-2">
+              <motion.div 
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.1, duration: 0.4 }}
+                className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-100/90 border border-emerald-300 text-emerald-900 text-xs sm:text-sm font-semibold shadow-xs"
+              >
+                <Gift className="w-4 h-4 text-emerald-700 shrink-0" />
+                <span>{instituteInfo?.heroKicker || 'Admissions Open 2026–2027'}</span>
+                <span className="text-emerald-400 font-bold" aria-hidden="true">·</span>
+                <span className="text-emerald-800 font-medium">{instituteInfo?.heroSubKicker || 'Free Bag & Smart ID Card Included'}</span>
+              </motion.div>
+
+              <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/90 border border-slate-200 text-slate-700 text-xs font-medium shadow-2xs">
+                <Clock className="w-3.5 h-3.5 text-sky-600 shrink-0" />
+                <span>{instituteInfo?.workingDays || 'Mon – Sat: 6:30 AM – 7:00 PM'}</span>
+                <span className="text-slate-300">·</span>
+                <span className="text-rose-700 font-bold">{instituteInfo?.sundayNotice || 'Sunday Closed (आइतबार साप्ताहिक बिदा / Sunday Holiday)'}</span>
+              </div>
+            </div>
 
             {/* Main Headline */}
             <div className="space-y-3">
               <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-slate-900 font-display leading-[1.15]" style={{ textWrap: 'balance' }}>
-                Official Computer Training Institute in{' '}
+                {instituteInfo?.heroHeadline || 'Official Computer Training Institute in'}{' '}
                 <span 
                   className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-700 via-green-600 to-rose-700"
                   style={{
                     backgroundImage: `linear-gradient(to right, ${config.primary}, ${config.accent})`,
                   }}
                 >
-                  Chakarchauda, Nepal
+                  {instituteInfo?.heroHighlightWord || 'Chakarchauda, Nepal'}
                 </span>
               </h1>
               
               <p className="text-base sm:text-lg text-slate-600 leading-relaxed max-w-2xl">
-                Master job-ready IT skills with practical 1:1 computer workstation access. Offering certified ADCA, DCA, Tally Prime with VAT, Desktop Publishing, and Language courses designed for government Lok Sewa, banking, and commercial careers.
+                {instituteInfo?.heroDescription || 'Master job-ready IT skills with practical 1:1 computer workstation access. Offering certified ADCA, DCA, Tally Prime with VAT, Desktop Publishing, and Language courses designed for government Lok Sewa, banking, and commercial careers.'}
               </p>
             </div>
 
@@ -108,11 +120,11 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
 
             {/* Trust Markers Bar */}
             <div className="pt-4 border-t border-slate-200/80 flex flex-wrap items-center gap-3 text-xs text-slate-600 font-medium">
-              <span className="font-bold text-emerald-800">NEDIAN CONNECT</span>
+              <span className="font-bold text-emerald-800">{instituteInfo?.name || 'NEDIAN CONNECT'}</span>
               <span className="text-slate-300" aria-hidden="true">·</span>
-              <span>Mayadevi R.M. - 4, Kapilvastu (Chakarchauda)</span>
+              <span>{instituteInfo?.address || 'Mayadevi R.M. - 4, Kapilvastu (Chakarchauda)'}</span>
               <span className="text-slate-300" aria-hidden="true">·</span>
-              <span className="text-rose-700 font-semibold">AI, Skills, Media</span>
+              <span className="text-rose-700 font-semibold">{instituteInfo?.tagline || 'AI, Skills, Media'}</span>
               <span className="text-slate-300" aria-hidden="true">·</span>
               <span className="text-sky-800 font-semibold">Govt. Registered</span>
             </div>

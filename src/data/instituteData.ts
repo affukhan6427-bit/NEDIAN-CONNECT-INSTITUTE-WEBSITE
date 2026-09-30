@@ -1,4 +1,33 @@
-import { Course, PlacementStory, InstituteNotice } from '../types';
+import { Course, PlacementStory, InstituteNotice, InstituteInfo, FaqItem } from '../types';
+
+export const DEFAULT_INSTITUTE_INFO: InstituteInfo = {
+  name: 'NEDIAN CONNECT INSTITUTE',
+  tagline: 'Practical Computer Education, Tally Prime, Graphic Design & Language Fluency',
+  division: 'AI, Skills, Media Division',
+  phone: '+977 9705508838',
+  whatsapp: '9705508838',
+  email: 'nedianconnect@gmail.com',
+  address: 'Mayadevi R.M. - 4, Kapilvastu (Chakarchauda Bazar), Nepal',
+  workingDays: 'Monday – Saturday: 6:30 AM – 7:00 PM',
+  sundayNotice: 'Sunday Closed (आइतबार साप्ताहिक बिदा / Sunday Holiday)',
+  directorName: 'Campus Director',
+  registeredNotice: 'Govt. Registered Computer Training Academy',
+
+  heroHeadline: 'Official Computer Training Institute in',
+  heroHighlightWord: 'Chakarchauda, Nepal',
+  heroDescription: 'Master job-ready IT skills with practical 1:1 computer workstation access. Offering certified ADCA, DCA, Tally Prime with VAT, Desktop Publishing, and Language courses designed for government Lok Sewa, banking, and commercial careers.',
+  heroKicker: 'Admissions Open 2026–2027',
+  heroSubKicker: 'Free Bag & Smart ID Card Included',
+
+  studentsTrainedCount: 1250,
+  batchesCompletedCount: 180,
+  workstationsCount: 45,
+  hiringPartnersCount: 50,
+
+  morningShift: '6:30 AM – 9:30 AM',
+  dayShift: '10:00 AM – 2:00 PM',
+  eveningShift: '3:00 PM – 7:00 PM',
+};
 
 export const INITIAL_COURSES: Course[] = [
   {
@@ -341,9 +370,9 @@ export const INITIAL_NOTICES: InstituteNotice[] = [
   },
   {
     id: 'notice-2',
-    title: 'Free Sunday Career Counseling & Practical Demo Lab',
-    content: 'Join our free 2-hour practical demo class every Sunday at 10:00 AM. Experience our 1:1 computer workstation lab and get personalized guidance on which course aligns with your career goals.',
-    date: 'Weekly',
+    title: 'Weekly Timetable: Mon–Sat Classes (Sunday Holiday / छुट्टी)',
+    content: 'Regular computer batches run Monday to Saturday from 6:30 AM to 7:00 PM. Sunday is a weekly holiday (Sunday ko chutty / बिदा). Direct admissions desk remains open during all working days.',
+    date: 'Schedule Notice',
     isUrgent: false,
     isActive: true
   },
@@ -426,5 +455,38 @@ export const INITIAL_CERTIFICATES = [
     status: 'Currently Enrolled (Active ID)',
     issueDate: '2026-01-10',
   },
+];
+
+export const INITIAL_FAQS: FaqItem[] = [
+  {
+    id: 'faq-1',
+    q: 'Are certificates from NEDIAN CONNECT INSTITUTE recognized for Nepal Government Lok Sewa Aayog?',
+    a: 'Yes, absolutely. Our 6-Month DCA and 1-Year ADCA diplomas and computer certifications are officially registered and compliant with standard curricula required by the Public Service Commission (Lok Sewa Aayog), Teachers Service Commission, Nepal Police, and nationalized commercial banks across Nepal.'
+  },
+  {
+    id: 'faq-2',
+    q: 'Do students have to share computers during practical lab sessions?',
+    a: 'No. At Nedian Connect Institute, we strictly enforce a 1:1 student-to-computer ratio. Every student gets their own dedicated desktop workstation with a mouse, keyboard, and independent screen for the full duration of every practical class.'
+  },
+  {
+    id: 'faq-3',
+    q: 'How does the Free Bag & Smart ID Card perk work?',
+    a: 'Every newly enrolled student in any regular diploma or certificate course receives a durable institute backpack and a laminated photo student identity card at no extra cost on their first day of class.'
+  },
+  {
+    id: 'faq-4',
+    q: 'What are the available daily class timings?',
+    a: 'We operate continuous batch shifts from 6:30 AM to 7:00 PM, Monday through Saturday. Sunday is a weekly holiday (Sunday ko chutty / आइतबार साप्ताहिक बिदा). Morning shifts (6:30 AM - 9:30 AM) are popular with school & college students, Day shifts (10:00 AM - 2:00 PM) for general learners, and Evening shifts (3:00 PM - 7:00 PM) for employees and business owners.'
+  },
+  {
+    id: 'faq-5',
+    q: 'What is the full-payment discount and how can fees be paid?',
+    a: 'Students paying their full course fee upfront in a single installment receive an immediate 10% to 15% concession depending on the course. We accept cash at the admissions counter, eSewa, Khalti, Mobile Banking QR, and direct bank transfers.'
+  },
+  {
+    id: 'faq-6',
+    q: 'Can non-technical students or beginners join courses like Tally Prime or ADCA?',
+    a: 'Yes. Our instructors start from the very basics of computer fundamentals, operating systems, and keyboard familiarity before advancing to accounting formulas, VAT calculations, or graphic design. We also provide extra practice lab hours at no extra charge.'
+  }
 ];
 

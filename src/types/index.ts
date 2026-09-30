@@ -70,3 +70,41 @@ export interface StudentCertificateRecord {
   issueDate: string;
 }
 
+export interface FaqItem {
+  id: string;
+  q: string;
+  a: string;
+}
+
+export interface InstituteInfo {
+  name: string;
+  tagline: string;
+  division: string;
+  phone: string;
+  whatsapp: string;
+  email: string;
+  address: string;
+  workingDays: string;
+  sundayNotice: string;
+  directorName: string;
+  registeredNotice: string;
+
+  // Hero Section Customization
+  heroHeadline?: string;
+  heroHighlightWord?: string;
+  heroDescription?: string;
+  heroKicker?: string;
+  heroSubKicker?: string;
+
+  // Institute Stats
+  studentsTrainedCount?: number;
+  batchesCompletedCount?: number;
+  workstationsCount?: number;
+  hiringPartnersCount?: number;
+
+  // Shifts
+  morningShift?: string;
+  dayShift?: string;
+  eveningShift?: string;
+}
+

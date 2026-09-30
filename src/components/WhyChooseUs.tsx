@@ -2,14 +2,19 @@ import React, { useState } from 'react';
 import { Gift, DollarSign, Monitor, Clock, ShieldCheck, Zap, Award, CheckCircle, Users, GraduationCap, TrendingUp, CheckCircle2 } from 'lucide-react';
 import { motion } from 'motion/react';
 import { StatCounter } from './StatCounter';
+import { InstituteInfo } from '../types';
 
-export const WhyChooseUs: React.FC = () => {
+interface WhyChooseUsProps {
+  instituteInfo?: InstituteInfo;
+}
+
+export const WhyChooseUs: React.FC<WhyChooseUsProps> = ({ instituteInfo }) => {
   const [imageError, setImageError] = useState(false);
 
   const stats = [
     {
       icon: Users,
-      value: 1250,
+      value: instituteInfo?.studentsTrainedCount || 1250,
       suffix: '+',
       label: 'Students Trained',
       sublabel: 'Empowered with job-ready digital IT skills',
@@ -17,7 +22,7 @@ export const WhyChooseUs: React.FC = () => {
     },
     {
       icon: GraduationCap,
-      value: 180,
+      value: instituteInfo?.batchesCompletedCount || 180,
       suffix: '+',
       label: 'Batches Completed',
       sublabel: 'Across morning, day & evening shifts',
@@ -34,8 +39,8 @@ export const WhyChooseUs: React.FC = () => {
     },
     {
       icon: CheckCircle2,
-      value: 100,
-      suffix: '%',
+      value: instituteInfo?.workstationsCount || 45,
+      suffix: '+ PCs',
       label: '1:1 Practical Ratio',
       sublabel: 'Dedicated desktop PC for every student (no sharing)',
       color: 'text-teal-700 bg-teal-50 border-teal-200',
@@ -220,23 +225,27 @@ export const WhyChooseUs: React.FC = () => {
                   <span>Daily Shift Timetable</span>
                 </h4>
                 <span className="text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded">
-                  Sunday – Friday
+                  Monday – Saturday
                 </span>
               </div>
 
               <div className="grid grid-cols-3 gap-2 text-center text-xs">
                 <div className="bg-slate-50 p-2.5 rounded-lg border border-slate-100">
                   <span className="font-bold text-slate-900 block">Morning</span>
-                  <span className="text-[11px] text-slate-500 font-mono">6:30 AM – 9:30 AM</span>
+                  <span className="text-[11px] text-slate-500 font-mono">{instituteInfo?.morningShift || '6:30 AM – 9:30 AM'}</span>
                 </div>
                 <div className="bg-slate-50 p-2.5 rounded-lg border border-slate-100">
                   <span className="font-bold text-slate-900 block">Day</span>
-                  <span className="text-[11px] text-slate-500 font-mono">10:00 AM – 2:00 PM</span>
+                  <span className="text-[11px] text-slate-500 font-mono">{instituteInfo?.dayShift || '10:00 AM – 2:00 PM'}</span>
                 </div>
                 <div className="bg-slate-50 p-2.5 rounded-lg border border-slate-100">
                   <span className="font-bold text-slate-900 block">Evening</span>
-                  <span className="text-[11px] text-slate-500 font-mono">3:00 PM – 7:00 PM</span>
+                  <span className="text-[11px] text-slate-500 font-mono">{instituteInfo?.eveningShift || '3:00 PM – 7:00 PM'}</span>
                 </div>
+              </div>
+
+              <div className="text-[11px] text-center bg-rose-50 border border-rose-200 text-rose-800 py-1.5 px-2 rounded-lg font-semibold flex items-center justify-center gap-1.5">
+                <span>{instituteInfo?.sundayNotice || 'Sunday: Closed (आइतबार साप्ताहिक बिदा / Sunday Holiday / Sunday ko chutty)'}</span>
               </div>
             </div>
 

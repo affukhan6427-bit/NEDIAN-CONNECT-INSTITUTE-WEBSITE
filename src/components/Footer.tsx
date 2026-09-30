@@ -1,13 +1,15 @@
 import React from 'react';
 import { Phone, MessageCircle, MapPin, Clock, Shield, Gift, Mail, ArrowUp } from 'lucide-react';
 import { NedianLogo } from './NedianLogo';
+import { InstituteInfo } from '../types';
 
 interface FooterProps {
   onOpenAdmin: () => void;
   onOpenInquiry: (courseCode?: string) => void;
+  instituteInfo?: InstituteInfo;
 }
 
-export const Footer: React.FC<FooterProps> = ({ onOpenAdmin, onOpenInquiry }) => {
+export const Footer: React.FC<FooterProps> = ({ onOpenAdmin, onOpenInquiry, instituteInfo }) => {
   const [footerClicks, setFooterClicks] = React.useState(0);
 
   const handleSecretFooterClick = () => {
@@ -116,7 +118,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenAdmin, onOpenInquiry }) =>
               <li><a href="#placements" className="hover:text-white transition-colors">Alumni Placements</a></li>
               <li><a href="#why-us" className="hover:text-white transition-colors">Why Choose Us &amp; Lab</a></li>
               <li><a href="#faq" className="hover:text-white transition-colors">FAQ &amp; Lok Sewa Validity</a></li>
-              <li><a href="#contact" className="hover:text-white transition-colors">Online Admission Form</a></li>
+              <li><a href="#contact" className="hover:text-white transition-colors">Course Admission Desk</a></li>
             </ul>
           </div>
 
@@ -128,28 +130,28 @@ export const Footer: React.FC<FooterProps> = ({ onOpenAdmin, onOpenInquiry }) =>
             <div className="space-y-2.5 text-xs text-slate-400">
               <div className="flex items-start gap-2">
                 <MapPin className="w-4 h-4 text-sky-400 shrink-0 mt-0.5" />
-                <span>Chakarchauda Main Bazar, Near Central Chowk, Nepal</span>
+                <span>{instituteInfo?.address || 'Chakarchauda Main Bazar, Near Central Chowk, Nepal'}</span>
               </div>
               <div className="flex items-center gap-2">
                 <Phone className="w-4 h-4 text-sky-400 shrink-0" />
-                <a href="tel:+9779705508838" className="hover:text-white font-mono font-bold">
-                  +977 9705508838
+                <a href={`tel:${instituteInfo?.phone || '+9779705508838'}`} className="hover:text-white font-mono font-bold">
+                  {instituteInfo?.phone || '+977 9705508838'}
                 </a>
               </div>
               <div className="flex items-center gap-2">
                 <MessageCircle className="w-4 h-4 text-emerald-400 shrink-0" />
                 <a
-                  href="https://wa.me/9779705508838"
+                  href={`https://wa.me/${(instituteInfo?.whatsapp || '9705508838').replace(/[^0-9]/g, '')}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="hover:text-white font-mono font-bold text-emerald-400"
                 >
-                  +977 9705508838 (WhatsApp)
+                  {instituteInfo?.whatsapp || '+977 9705508838'} (WhatsApp)
                 </a>
               </div>
               <div className="flex items-center gap-2">
                 <Clock className="w-4 h-4 text-slate-400 shrink-0" />
-                <span>6:30 AM – 7:00 PM (Sun–Fri)</span>
+                <span>{instituteInfo?.workingDays || '6:30 AM – 7:00 PM (Mon–Sat)'} · <strong className="text-rose-400 font-semibold">{instituteInfo?.sundayNotice || 'Sunday Closed (Holiday)'}</strong></span>
               </div>
             </div>
           </div>
@@ -159,7 +161,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenAdmin, onOpenInquiry }) =>
         {/* Bottom Bar: Copyright & Discreet Secret Portal Trigger */}
         <div className="pt-8 border-t border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-400">
           <div>
-            &copy; {new Date().getFullYear()} NEDIAN CONNECT INSTITUTE PVT. LTD. All rights reserved. Chakarchauda, Nepal
+            &copy; {new Date().getFullYear()} {instituteInfo?.name || 'NEDIAN CONNECT INSTITUTE PVT. LTD.'}. All rights reserved. Chakarchauda, Nepal
             <button
               type="button"
               onClick={handleSecretFooterClick}
@@ -188,7 +190,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenAdmin, onOpenInquiry }) =>
       <aside aria-label="Quick Actions" className="fixed bottom-0 left-0 right-0 z-30 bg-white/95 backdrop-blur-md border-t border-slate-200 p-2 sm:p-3 shadow-lg lg:hidden">
         <div className="max-w-md mx-auto grid grid-cols-2 gap-2">
           <a
-            href="tel:+9779705508838"
+            href={`tel:${instituteInfo?.phone || '+9779705508838'}`}
             className="flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-lg text-xs font-bold text-slate-900 bg-slate-100 hover:bg-slate-200 transition-colors border border-slate-300"
           >
             <Phone className="w-4 h-4 text-sky-700" />
@@ -196,7 +198,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenAdmin, onOpenInquiry }) =>
           </a>
 
           <a
-            href="https://wa.me/9779705508838?text=Hello%20NEDIAN%20CONNECT%20INSTITUTE%2C%20I%20want%20to%20inquire%20about%202026-2027%20admissions."
+            href={`https://wa.me/${(instituteInfo?.whatsapp || '9705508838').replace(/[^0-9]/g, '')}?text=Hello%20${encodeURIComponent(instituteInfo?.name || 'NEDIAN CONNECT INSTITUTE')}%2C%20I%20want%20to%20inquire%20about%202026-2027%20admissions.`}
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-lg text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-700 transition-colors shadow-xs"

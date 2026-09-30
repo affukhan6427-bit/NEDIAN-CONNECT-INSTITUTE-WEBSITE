@@ -3,9 +3,10 @@ import {
   INITIAL_COURSES, 
   INITIAL_PLACEMENTS, 
   INITIAL_NOTICES, 
-  INITIAL_INQUIRIES 
+  INITIAL_INQUIRIES,
+  DEFAULT_INSTITUTE_INFO
 } from './data/instituteData';
-import { Course, PlacementStory, InstituteNotice, StudentInquiry } from './types';
+import { Course, PlacementStory, InstituteNotice, StudentInquiry, InstituteInfo } from './types';
 import { Navbar } from './components/Navbar';
 import { HeroSection } from './components/HeroSection';
 import { FeeAndCoursesSection } from './components/FeeAndCoursesSection';
@@ -20,6 +21,19 @@ import { GoogleDriveModal } from './components/GoogleDriveModal';
 import { ThemeProvider } from './context/ThemeContext';
 
 export default function App() {
+  // Institute Info state with local persistence
+  const [instituteInfo, setInstituteInfo] = useState<InstituteInfo>(() => {
+    const saved = localStorage.getItem('nedian_institute_info');
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch (e) {
+        console.error('Error parsing instituteInfo from localStorage', e);
+      }
+    }
+    return DEFAULT_INSTITUTE_INFO;
+  });
+
   // Courses state with local persistence
   const [courses, setCourses] = useState<Course[]>(() => {
     const saved = localStorage.getItem('nedian_courses');
@@ -99,6 +113,11 @@ export default function App() {
     localStorage.setItem('nedian_inquiries', JSON.stringify(newInquiries));
   };
 
+  const handleUpdateInstituteInfo = (newInfo: InstituteInfo) => {
+    setInstituteInfo(newInfo);
+    localStorage.setItem('nedian_institute_info', JSON.stringify(newInfo));
+  };
+
   const handleNewInquirySubmitted = (newInquiry: StudentInquiry) => {
     const updated = [newInquiry, ...inquiries];
     handleUpdateInquiries(updated);
@@ -157,6 +176,7 @@ export default function App() {
           onOpenVerify={() => setIsVerifyOpen(true)}
           onOpenDrive={() => setIsDriveOpen(true)}
           urgentNotice={activeNotice ? `${activeNotice.title}: ${activeNotice.content}` : undefined}
+          instituteInfo={instituteInfo}
         />
 
         {/* Main Content Sections */}
@@ -165,6 +185,7 @@ export default function App() {
           <HeroSection
             onExploreCourses={() => scrollToSection('courses')}
             onOpenInquiry={() => scrollToSection('contact')}
+            instituteInfo={instituteInfo}
           />
 
           {/* Exact Fee Chart & Courses Catalog with Interactive Fee Calculator & Modal */}
@@ -177,23 +198,25 @@ export default function App() {
           <PlacementSection stories={placements} />
 
           {/* Why Choose Us & Lab Facilities */}
-          <WhyChooseUs />
+          <WhyChooseUs instituteInfo={instituteInfo} />
 
           {/* Student Online Admission Inquiry Form */}
           <InquirySection
             courses={courses}
             preselectedCourseCode={selectedCourseForInquiry}
             onInquirySubmitted={handleNewInquirySubmitted}
+            instituteInfo={instituteInfo}
           />
 
           {/* Frequently Asked Questions */}
-          <FaqSection />
+          <FaqSection instituteInfo={instituteInfo} />
         </main>
 
         {/* Footer & Floating Quick Action Access */}
         <Footer
           onOpenAdmin={() => setIsAdminOpen(true)}
           onOpenInquiry={handleOpenInquiryWithCourse}
+          instituteInfo={instituteInfo}
         />
 
         {/* PIN-Protected Administrative Management Portal */}
@@ -208,6 +231,8 @@ export default function App() {
           onUpdateNotices={handleUpdateNotices}
           inquiries={inquiries}
           onUpdateInquiries={handleUpdateInquiries}
+          instituteInfo={instituteInfo}
+          onUpdateInstituteInfo={handleUpdateInstituteInfo}
         />
 
         {/* Student ID & Certificate Verification Portal */}

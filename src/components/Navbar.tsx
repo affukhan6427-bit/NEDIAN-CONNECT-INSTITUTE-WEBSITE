@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Phone, MessageCircle, Menu, X, Shield, Award, HardDrive } from 'lucide-react';
 import { NedianLogo } from './NedianLogo';
+import { InstituteInfo } from '../types';
 
 interface NavbarProps {
   onOpenAdmin: () => void;
@@ -8,6 +9,7 @@ interface NavbarProps {
   onOpenVerify: () => void;
   onOpenDrive: () => void;
   urgentNotice?: string;
+  instituteInfo?: InstituteInfo;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -16,6 +18,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   onOpenVerify,
   onOpenDrive,
   urgentNotice,
+  instituteInfo,
 }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [logoClicks, setLogoClicks] = useState(0);
@@ -121,17 +124,17 @@ export const Navbar: React.FC<NavbarProps> = ({
             </button>
 
             <a
-              href="tel:+9779705508838"
+              href={`tel:${instituteInfo?.phone || '+9779705508838'}`}
               className="hidden sm:inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-slate-700 hover:text-emerald-700 hover:bg-slate-100 rounded-lg transition-colors border border-slate-200"
               title="Call for Info"
             >
               <Phone className="w-3.5 h-3.5 text-sky-600" />
               <span className="font-semibold text-slate-600">Call for Info:</span>
-              <span className="font-mono tabular-nums">+977 9705508838</span>
+              <span className="font-mono tabular-nums">{instituteInfo?.phone || '+977 9705508838'}</span>
             </a>
 
             <a
-              href="https://wa.me/9779705508838?text=Hello%20NEDIAN%20CONNECT%20INSTITUTE%2C%20I%20would%20like%20to%20inquire%20about%20admissions%20and%20courses."
+              href={`https://wa.me/${(instituteInfo?.whatsapp || '9705508838').replace(/[^0-9]/g, '')}?text=Hello%20${encodeURIComponent(instituteInfo?.name || 'NEDIAN CONNECT INSTITUTE')}%2C%20I%20would%20like%20to%20inquire%20about%20admissions%20and%20courses.`}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-700 rounded-lg shadow-xs transition-all whitespace-nowrap active:scale-95"
@@ -183,11 +186,11 @@ export const Navbar: React.FC<NavbarProps> = ({
               </button>
 
               <a
-                href="tel:+9779705508838"
+                href={`tel:${instituteInfo?.phone || '+9779705508838'}`}
                 className="flex items-center justify-center gap-2 w-full py-2.5 px-4 text-sm font-semibold text-slate-800 bg-slate-100 rounded-lg"
               >
                 <Phone className="w-4 h-4 text-sky-600" />
-                <span>Call for Info: +977 9705508838</span>
+                <span>Call for Info: {instituteInfo?.phone || '+977 9705508838'}</span>
               </a>
 
               <button

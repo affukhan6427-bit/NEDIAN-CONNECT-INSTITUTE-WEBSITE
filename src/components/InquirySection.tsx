@@ -1,18 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { Send, MessageCircle, Phone, CheckCircle, Sparkles, Gift } from 'lucide-react';
-import { Course, StudentInquiry } from '../types';
+import { Course, StudentInquiry, InstituteInfo } from '../types';
 import { useTheme } from '../context/ThemeContext';
 
 interface InquirySectionProps {
   courses: Course[];
   preselectedCourseCode?: string;
   onInquirySubmitted: (inquiry: StudentInquiry) => void;
+  instituteInfo?: InstituteInfo;
 }
 
 export const InquirySection: React.FC<InquirySectionProps> = ({
   courses,
   preselectedCourseCode,
   onInquirySubmitted,
+  instituteInfo,
 }) => {
   const { config } = useTheme();
   const [fullName, setFullName] = useState('');
@@ -63,16 +65,19 @@ export const InquirySection: React.FC<InquirySectionProps> = ({
 
     onInquirySubmitted(newInquiry);
     setSubmitted(true);
+
+    // Open WhatsApp directly with inquiry details
+    const courseTitle = selectedCourseObj ? `${selectedCourseObj.name} (${selectedCourseObj.code})` : courseCode;
+    const phoneClean = (instituteInfo?.whatsapp || '9705508838').replace(/[^0-9]/g, '');
+    const waNumber = phoneClean.startsWith('977') ? phoneClean : `977${phoneClean}`;
+    const text = encodeURIComponent(
+      `Hello ${instituteInfo?.name || 'NEDIAN CONNECT INSTITUTE'},\nI would like to apply for admission:\n- Name: ${fullName.trim()}\n- Phone: ${phone.trim()}\n${whatsapp.trim() ? `- WhatsApp: ${whatsapp.trim()}\n` : ''}- Course: ${courseTitle}\n- Shift: ${preferredShift}\n- Education: ${educationLevel}\n- Address: ${address.trim() || 'Chakarchauda'}\n${message.trim() ? `- Note: ${message.trim()}` : ''}`
+    );
+    window.open(`https://wa.me/${waNumber}?text=${text}`, '_blank');
   };
 
   const handleWhatsAppDirect = () => {
-    const selectedCourseObj = courses.find((c) => c.code.toLowerCase() === courseCode.toLowerCase());
-    const courseTitle = selectedCourseObj ? `${selectedCourseObj.name} (${selectedCourseObj.code})` : courseCode;
-    
-    const text = encodeURIComponent(
-      `Hello NEDIAN CONNECT INSTITUTE,\nI would like to apply for admission:\n- Name: ${fullName || 'Interested Student'}\n- Phone: ${phone || 'Not provided'}\n- Course: ${courseTitle}\n- Shift: ${preferredShift}\n- Education: ${educationLevel}\n- Address: ${address || 'Chakarchauda'}\n${message ? `- Note: ${message}` : ''}`
-    );
-    window.open(`https://wa.me/9779705508838?text=${text}`, '_blank');
+    handleSubmit({ preventDefault: () => {} } as React.FormEvent);
   };
 
   return (
@@ -104,10 +109,10 @@ export const InquirySection: React.FC<InquirySectionProps> = ({
                 <div>
                   <h4 className="font-bold text-slate-900">Direct Telephone</h4>
                   <a
-                    href="tel:+9779705508838"
+                    href={`tel:${instituteInfo?.phone || '+9779705508838'}`}
                     className="text-sky-700 font-mono font-bold hover:underline"
                   >
-                    +977 9705508838
+                    {instituteInfo?.phone || '+977 9705508838'}
                   </a>
                   <p className="text-xs text-slate-500 mt-0.5">Direct line to Campus Director</p>
                 </div>
@@ -120,12 +125,12 @@ export const InquirySection: React.FC<InquirySectionProps> = ({
                 <div>
                   <h4 className="font-bold text-emerald-950">Official WhatsApp</h4>
                   <a
-                    href="https://wa.me/9779705508838"
+                    href={`https://wa.me/${(instituteInfo?.whatsapp || '9705508838').replace(/[^0-9]/g, '')}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-emerald-800 font-mono font-bold hover:underline"
                   >
-                    +977 9705508838
+                    {instituteInfo?.whatsapp || '+977 9705508838'}
                   </a>
                   <p className="text-xs text-emerald-700 mt-0.5">Quick inquiries &amp; syllabus PDFs</p>
                 </div>
@@ -134,12 +139,12 @@ export const InquirySection: React.FC<InquirySectionProps> = ({
               <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-1">
                 <h4 className="font-bold text-slate-900">Institute Campus Address</h4>
                 <p className="text-xs text-slate-600 leading-relaxed">
-                  NEDIAN CONNECT INSTITUTE PVT. LTD.<br />
-                  Mayadevi R.M. - 4, Kapilvastu (Chakarchauda Bazar), Nepal<br />
-                  <span className="font-semibold text-rose-700">AI, Skills, Media Division</span>
+                  {instituteInfo?.name || 'NEDIAN CONNECT INSTITUTE PVT. LTD.'}<br />
+                  {instituteInfo?.address || 'Mayadevi R.M. - 4, Kapilvastu (Chakarchauda Bazar), Nepal'}<br />
+                  <span className="font-semibold text-rose-700">{instituteInfo?.division || 'AI, Skills, Media Division'}</span>
                 </p>
                 <div className="pt-2 text-xs text-slate-500 font-medium">
-                  Class Hours: Sunday – Friday (6:30 AM – 7:00 PM)
+                  Class Hours: {instituteInfo?.workingDays || 'Monday – Saturday (6:30 AM – 7:00 PM)'} · <span className="text-rose-700 font-semibold">{instituteInfo?.sundayNotice || 'Sunday Closed (साप्ताहिक बिदा / Holiday)'}</span>
                 </div>
               </div>
             </div>
@@ -197,7 +202,7 @@ export const InquirySection: React.FC<InquirySectionProps> = ({
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="border-b border-slate-200 pb-3">
                   <h3 className="text-xl font-bold text-slate-900 font-display">
-                    Online Admission &amp; Course Application
+                    Course Admission &amp; Inquiry Application
                   </h3>
                   <p className="text-xs text-slate-500 mt-0.5">
                     Reserve your dedicated computer workstation in the upcoming 2026–2027 batch.
@@ -344,24 +349,23 @@ export const InquirySection: React.FC<InquirySectionProps> = ({
                 <div className="pt-2 flex flex-col sm:flex-row items-center gap-3">
                   <button
                     type="submit"
-                    className={`w-full sm:flex-1 py-3 px-5 text-sm font-bold rounded-xl shadow-sm transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-98 ${config.btnPrimary}`}
+                    className="w-full sm:flex-1 py-3.5 px-6 text-sm font-bold text-white bg-emerald-600 hover:bg-emerald-700 rounded-xl shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-98"
                   >
-                    <Send className="w-4 h-4" />
-                    <span>Submit Online Application</span>
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={handleWhatsAppDirect}
-                    className="w-full sm:w-auto py-3 px-5 text-sm font-bold text-emerald-800 bg-emerald-100 hover:bg-emerald-200 border border-emerald-300 rounded-xl transition-all flex items-center justify-center gap-2 cursor-pointer"
-                  >
-                    <MessageCircle className="w-4 h-4 text-emerald-700" />
+                    <MessageCircle className="w-5 h-5 text-white" />
                     <span>Apply via WhatsApp</span>
                   </button>
+
+                  <a
+                    href={`tel:${instituteInfo?.phone || '+9779705508838'}`}
+                    className="w-full sm:w-auto py-3.5 px-5 text-sm font-bold text-slate-800 bg-slate-100 hover:bg-slate-200 border border-slate-300 rounded-xl transition-all flex items-center justify-center gap-2"
+                  >
+                    <Phone className="w-4 h-4 text-sky-700" />
+                    <span>Call for Info</span>
+                  </a>
                 </div>
 
                 <div className="text-[11px] text-slate-500 text-center pt-1">
-                  * By submitting, you reserve your seat. All admissions include free bag &amp; ID card.
+                  * By applying, you reserve your seat. All admissions include free bag &amp; ID card.
                 </div>
               </form>
             )}
