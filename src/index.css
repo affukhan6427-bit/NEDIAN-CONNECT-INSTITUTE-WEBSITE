@@ -1,4 +1,6 @@
-@import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 @layer base {
   body {
@@ -43,5 +45,3 @@ html {
 .animate-pulse-glow {
   animation: pulseGlow 6s ease-in-out infinite;
 }
-
-
