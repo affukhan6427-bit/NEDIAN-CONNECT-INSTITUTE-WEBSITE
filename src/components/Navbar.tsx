@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
-import { Phone, MessageCircle, Menu, X, Shield, Award, HardDrive } from 'lucide-react';
+import { Phone, MessageCircle, Menu, X, Shield, HardDrive } from 'lucide-react';
 import { NedianLogo } from './NedianLogo';
 import { InstituteInfo } from '../types';
 
 interface NavbarProps {
   onOpenAdmin: () => void;
   onOpenInquiry: (courseCode?: string) => void;
-  onOpenVerify: () => void;
+  onOpenVerify?: () => void;
   onOpenDrive: () => void;
   urgentNotice?: string;
   instituteInfo?: InstituteInfo;
@@ -112,15 +112,6 @@ export const Navbar: React.FC<NavbarProps> = ({
             >
               <HardDrive className="w-3.5 h-3.5 text-sky-600" />
               <span>Drive</span>
-            </button>
-
-            <button
-              onClick={onOpenVerify}
-              className="hidden md:inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-emerald-800 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 rounded-lg transition-colors cursor-pointer"
-              title="Verify Student ID or Certificate"
-            >
-              <Award className="w-3.5 h-3.5 text-emerald-700" />
-              <span>Verify ID</span>
             </button>
 
             <a

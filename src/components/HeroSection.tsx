@@ -3,6 +3,7 @@ import { ArrowRight, CheckCircle2, Gift, Sparkles, Monitor, Users, Clock, Award,
 import { motion } from 'motion/react';
 import { useTheme } from '../context/ThemeContext';
 import { InstituteInfo } from '../types';
+import heroLabImage from '../assets/images/hero_computer_institute_1790687406817.jpg';
 
 interface HeroSectionProps {
   onExploreCourses: () => void;
@@ -35,26 +36,21 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
             className="lg:col-span-7 space-y-6"
           >
             
-            {/* Highlight Banner / Admission Kicker */}
-            <div className="flex flex-wrap items-center gap-2">
-              <motion.div 
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.1, duration: 0.4 }}
-                className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-100/90 border border-emerald-300 text-emerald-900 text-xs sm:text-sm font-semibold shadow-xs"
-              >
-                <Gift className="w-4 h-4 text-emerald-700 shrink-0" />
-                <span>{instituteInfo?.heroKicker || 'Admissions Open 2026–2027'}</span>
-                <span className="text-emerald-400 font-bold" aria-hidden="true">·</span>
-                <span className="text-emerald-800 font-medium">{instituteInfo?.heroSubKicker || 'Free Bag & Smart ID Card Included'}</span>
-              </motion.div>
-
-              <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/90 border border-slate-200 text-slate-700 text-xs font-medium shadow-2xs">
+            {/* Admission Kicker & Schedule Metadata */}
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 text-xs sm:text-sm text-slate-600 font-medium">
+              <span className="font-bold text-emerald-800 flex items-center gap-1.5">
+                <Gift className="w-3.5 h-3.5 text-emerald-700 shrink-0" />
+                {instituteInfo?.heroKicker || 'Admissions Open 2026–2027'}
+              </span>
+              <span className="text-slate-300" aria-hidden="true">·</span>
+              <span className="text-slate-700">{instituteInfo?.heroSubKicker || 'Free Bag & Smart ID Card Included'}</span>
+              <span className="text-slate-300" aria-hidden="true">·</span>
+              <span className="inline-flex items-center gap-1 text-slate-600">
                 <Clock className="w-3.5 h-3.5 text-sky-600 shrink-0" />
-                <span>{instituteInfo?.workingDays || 'Mon – Sat: 6:30 AM – 7:00 PM'}</span>
-                <span className="text-slate-300">·</span>
-                <span className="text-rose-700 font-bold">{instituteInfo?.sundayNotice || 'Sunday Closed (आइतबार साप्ताहिक बिदा / Sunday Holiday)'}</span>
-              </div>
+                {instituteInfo?.workingDays || 'Mon – Sat: 6:30 AM – 7:00 PM'}
+              </span>
+              <span className="text-slate-300" aria-hidden="true">·</span>
+              <span className="text-rose-700 font-semibold">{instituteInfo?.sundayNotice || 'Sunday Closed (आइतबार साप्ताहिक बिदा)'}</span>
             </div>
 
             {/* Main Headline */}
@@ -140,7 +136,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
             <div className="relative rounded-2xl overflow-hidden shadow-2xl border border-slate-200/80 bg-slate-900 group">
               {!imageError ? (
                 <img
-                  src="/src/assets/images/hero_computer_institute_1790687406817.jpg"
+                  src={heroLabImage}
                   alt="Students learning in computer training lab at NEDIAN CONNECT INSTITUTE in Chakarchauda Nepal"
                   referrerPolicy="no-referrer"
                   onError={() => setImageError(true)}
@@ -188,22 +184,26 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                 whileHover={{ y: -3 }}
                 className="bg-white p-3 rounded-xl border border-slate-200 text-center shadow-xs transition-shadow"
               >
-                <div className="text-lg sm:text-xl font-extrabold text-sky-700 font-mono tabular-nums">1,200+</div>
+                <div className="text-lg sm:text-xl font-extrabold text-sky-700 font-mono tabular-nums">
+                  {(instituteInfo?.studentsTrainedCount || 1250).toLocaleString()}+
+                </div>
                 <div className="text-[11px] text-slate-500 font-medium">Trained Alumni</div>
               </motion.div>
               <motion.div 
                 whileHover={{ y: -3 }}
                 className="bg-white p-3 rounded-xl border border-slate-200 text-center shadow-xs transition-shadow"
               >
-                <div className="text-lg sm:text-xl font-extrabold text-emerald-700 font-mono tabular-nums">1:1</div>
+                <div className="text-lg sm:text-xl font-extrabold text-emerald-700 font-mono tabular-nums">
+                  1:1 ({instituteInfo?.workstationsCount || 45}+ PCs)
+                </div>
                 <div className="text-[11px] text-slate-500 font-medium">Workstation Ratio</div>
               </motion.div>
               <motion.div 
                 whileHover={{ y: -3 }}
                 className="bg-white p-3 rounded-xl border border-slate-200 text-center shadow-xs transition-shadow"
               >
-                <div className="text-lg sm:text-xl font-extrabold text-slate-800 font-mono tabular-nums">94%</div>
-                <div className="text-[11px] text-slate-500 font-medium">Placement Rate</div>
+                <div className="text-lg sm:text-xl font-extrabold text-slate-800 font-mono tabular-nums">94.6%</div>
+                <div className="text-[11px] text-slate-500 font-medium">Placement &amp; Exam Pass</div>
               </motion.div>
             </div>
 

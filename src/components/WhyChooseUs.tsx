@@ -3,6 +3,7 @@ import { Gift, DollarSign, Monitor, Clock, ShieldCheck, Zap, Award, CheckCircle,
 import { motion } from 'motion/react';
 import { StatCounter } from './StatCounter';
 import { InstituteInfo } from '../types';
+import labWorkstationsImg from '../assets/images/lab_workstations_facility_1790687428795.jpg';
 
 interface WhyChooseUsProps {
   instituteInfo?: InstituteInfo;
@@ -190,7 +191,7 @@ export const WhyChooseUs: React.FC<WhyChooseUsProps> = ({ instituteInfo }) => {
             <div className="rounded-2xl overflow-hidden border border-slate-200 shadow-md bg-slate-900 relative group">
               {!imageError ? (
                 <img
-                  src="/src/assets/images/lab_workstations_facility_1790687428795.jpg"
+                  src={labWorkstationsImg}
                   alt="Modern computer laboratory workstation setup at Nedian Connect Institute Chakarchauda"
                   referrerPolicy="no-referrer"
                   onError={() => setImageError(true)}
