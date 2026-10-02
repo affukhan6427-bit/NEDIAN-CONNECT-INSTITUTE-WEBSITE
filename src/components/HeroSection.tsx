@@ -22,8 +22,14 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
   return (
     <section id="home" className={`relative overflow-hidden bg-gradient-to-b ${config.heroGradient} pt-10 pb-16 lg:pt-16 lg:pb-24 transition-colors duration-500`}>
       {/* Subtle animated decorative background gradient spots */}
-      <div className="absolute top-0 right-1/4 -z-10 w-96 h-96 bg-emerald-200/40 rounded-full blur-3xl pointer-events-none animate-pulse-glow" />
-      <div className="absolute bottom-10 left-10 -z-10 w-80 h-80 bg-red-200/30 rounded-full blur-3xl pointer-events-none animate-float" />
+      <div 
+        className="absolute top-0 right-1/4 -z-10 w-96 h-96 rounded-full blur-3xl pointer-events-none animate-pulse-glow transition-colors duration-700" 
+        style={{ backgroundColor: `${config.primary}33` }}
+      />
+      <div 
+        className="absolute bottom-10 left-10 -z-10 w-80 h-80 rounded-full blur-3xl pointer-events-none animate-float transition-colors duration-700" 
+        style={{ backgroundColor: `${config.accent}25` }}
+      />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">

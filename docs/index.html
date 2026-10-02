@@ -39,8 +39,16 @@
       }
     }
     </script>
-    <script type="module" crossorigin src="./assets/index-DzK0J96O.js"></script>
-    <link rel="stylesheet" crossorigin href="./assets/index-Cm2CrvtH.css">
+    <script>
+      // Enforce trailing slash on repository root path if accessed without slash
+      (function(l) {
+        if (l.pathname.length > 1 && !l.pathname.endsWith('/') && !l.pathname.split('/').pop().includes('.')) {
+          l.replace(l.protocol + '//' + l.host + l.pathname + '/' + l.search + l.hash);
+        }
+      }(window.location));
+    </script>
+    <script type="module" crossorigin src="./assets/index-D40uJq2d.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-DIWBaNuD.css">
   </head>
   <body class="bg-slate-50 text-slate-900 font-sans antialiased selection:bg-sky-500 selection:text-white">
     <script>

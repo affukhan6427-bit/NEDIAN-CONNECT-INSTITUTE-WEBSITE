@@ -39,6 +39,14 @@
       }
     }
     </script>
+    <script>
+      // Enforce trailing slash on repository root path if accessed without slash
+      (function(l) {
+        if (l.pathname.length > 1 && !l.pathname.endsWith('/') && !l.pathname.split('/').pop().includes('.')) {
+          l.replace(l.protocol + '//' + l.host + l.pathname + '/' + l.search + l.hash);
+        }
+      }(window.location));
+    </script>
   </head>
   <body class="bg-slate-50 text-slate-900 font-sans antialiased selection:bg-sky-500 selection:text-white">
     <script>
