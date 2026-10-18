@@ -1,23 +1,11 @@
-import { initializeApp, getApps, getApp } from 'firebase/app';
 import { 
-  getAuth, 
   signInWithPopup, 
   GoogleAuthProvider, 
   onAuthStateChanged, 
   User, 
   signOut 
 } from 'firebase/auth';
-import firebaseConfig from '../../firebase-applet-config.json';
-
-// Initialize Firebase App safely
-let app: any;
-let auth: any;
-try {
-  app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
-  auth = getAuth(app);
-} catch (e) {
-  console.warn('Firebase app initialization warning:', e);
-}
+import { auth } from './firebase';
 export { auth };
 
 export const SCOPES = [

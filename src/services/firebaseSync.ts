@@ -1,6 +1,4 @@
-import { initializeApp, getApps, getApp } from 'firebase/app';
 import { 
-  getFirestore, 
   doc, 
   collection, 
   onSnapshot, 
@@ -11,7 +9,8 @@ import {
   deleteDoc,
   writeBatch
 } from 'firebase/firestore';
-import firebaseConfig from '../../firebase-applet-config.json';
+import { db } from './firebase';
+export { db };
 import { 
   Course, 
   PlacementStory, 
@@ -28,14 +27,6 @@ import {
   INITIAL_CERTIFICATES, 
   INITIAL_INQUIRIES 
 } from '../data/instituteData';
-
-// Initialize Firebase App safely
-const app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
-
-// Initialize Firestore targeting the specific provisioned database
-export const db = firebaseConfig.firestoreDatabaseId 
-  ? getFirestore(app, firebaseConfig.firestoreDatabaseId)
-  : getFirestore(app);
 
 // Validate connection per Firebase Skill Guidelines
 export async function testConnection(): Promise<boolean> {
@@ -60,51 +51,28 @@ export async function seedInitialDataIfEmpty() {
     const profileSnap = await getDoc(profileRef);
 
     if (!profileSnap.exists()) {
-      // Seed profile
       await setDoc(profileRef, {
         ...DEFAULT_INSTITUTE_INFO,
         updatedAt: new Date().toISOString(),
       });
+    }
 
-      // Seed courses
+    const coursesSnap = await getDocs(collection(db, 'courses'));
+    if (coursesSnap.empty) {
       const batch = writeBatch(db);
       INITIAL_COURSES.forEach((course) => {
         const cRef = doc(db, 'courses', course.id);
         batch.set(cRef, course);
       });
-
-      // Seed notices
-      INITIAL_NOTICES.forEach((notice) => {
-        const nRef = doc(db, 'notices', notice.id);
-        batch.set(nRef, notice);
-      });
-
-      // Seed placements
-      INITIAL_PLACEMENTS.forEach((placement) => {
-        const pRef = doc(db, 'placements', placement.id);
-        batch.set(pRef, placement);
-      });
-
-      // Seed certificates
-      INITIAL_CERTIFICATES.forEach((cert) => {
-        const certKey = (cert.studentId || cert.id).replace(/[^a-zA-Z0-9_-]/g, '_');
-        const certRef = doc(db, 'certificates', certKey);
-        batch.set(certRef, cert);
-      });
-
-      // Seed initial sample inquiries
-      INITIAL_INQUIRIES.forEach((inq) => {
-        const inqRef = doc(db, 'inquiries', inq.id);
-        batch.set(inqRef, inq);
-      });
-
       await batch.commit();
-      console.log('Successfully seeded initial Nedian Connect Institute data into Cloud Firestore.');
     }
   } catch (err) {
     console.warn('Initial data seeding notice (using local/default data):', err);
   }
 }
+
+// Map for preserving default curriculum logical ordering
+const courseOrderMap = new Map(INITIAL_COURSES.map((c, idx) => [c.id, idx]));
 
 // -------------------------------------------------------------
 // REAL-TIME CLOUD LISTENERS (Updates all phones in real-time)
@@ -133,7 +101,12 @@ export function subscribeToCourses(onData: (courses: Course[]) => void) {
     return onSnapshot(colRef, (snap) => {
       if (!snap.empty) {
         const items = snap.docs.map((d) => d.data() as Course);
-        // Retain original order or duration order
+        // Retain logical syllabus ordering
+        items.sort((a, b) => {
+          const idxA = courseOrderMap.has(a.id) ? courseOrderMap.get(a.id)! : 999;
+          const idxB = courseOrderMap.has(b.id) ? courseOrderMap.get(b.id)! : 999;
+          return idxA - idxB;
+        });
         onData(items);
       }
     }, (err) => {
