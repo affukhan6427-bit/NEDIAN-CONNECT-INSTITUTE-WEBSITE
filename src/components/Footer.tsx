@@ -1,5 +1,5 @@
 import React from 'react';
-import { Phone, MessageCircle, MapPin, Clock, Shield, Gift, Mail, ArrowUp } from 'lucide-react';
+import { Phone, MessageCircle, MapPin, Clock, Shield, Gift, Mail, ArrowUp, Lock } from 'lucide-react';
 import { NedianLogo } from './NedianLogo';
 import { InstituteInfo } from '../types';
 

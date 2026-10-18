@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Phone, MessageCircle, Menu, X, Shield, HardDrive } from 'lucide-react';
+import { Phone, MessageCircle, Menu, X, Shield, HardDrive, Lock } from 'lucide-react';
 import { NedianLogo } from './NedianLogo';
 import { InstituteInfo } from '../types';
 

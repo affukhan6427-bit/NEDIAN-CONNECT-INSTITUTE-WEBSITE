@@ -1,0 +1,110 @@
+{
+  "entities": {
+    "InstituteInfo": {
+      "title": "InstituteInfo",
+      "description": "General profile, contact, and timetable of Nedian Connect Institute",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "division": { "type": "string" },
+        "tagline": { "type": "string" },
+        "phone": { "type": "string" },
+        "whatsapp": { "type": "string" },
+        "email": { "type": "string" },
+        "address": { "type": "string" },
+        "workingDays": { "type": "string" },
+        "sundayNotice": { "type": "string" },
+        "heroHeadline": { "type": "string" },
+        "heroHighlightWord": { "type": "string" },
+        "heroDescription": { "type": "string" },
+        "studentsTrainedCount": { "type": "number" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["name", "phone", "address"]
+    },
+    "Course": {
+      "title": "Course",
+      "description": "Training curriculum and fee structure",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "code": { "type": "string" },
+        "name": { "type": "string" },
+        "category": { "type": "string" },
+        "durationMonths": { "type": "number" },
+        "admissionFee": { "type": "number" },
+        "monthlyFee": { "type": "number" },
+        "totalFee": { "type": "number" },
+        "fullPayDiscountPercent": { "type": "number" },
+        "description": { "type": "string" }
+      },
+      "required": ["id", "code", "name", "durationMonths", "admissionFee", "monthlyFee"]
+    },
+    "Notice": {
+      "title": "Notice",
+      "description": "Institute announcement or urgent notice",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "content": { "type": "string" },
+        "date": { "type": "string" },
+        "isUrgent": { "type": "boolean" },
+        "isActive": { "type": "boolean" }
+      },
+      "required": ["id", "title", "content"]
+    },
+    "Placement": {
+      "title": "Placement",
+      "description": "Alumni employment and placement story",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "studentName": { "type": "string" },
+        "courseTaken": { "type": "string" },
+        "role": { "type": "string" },
+        "company": { "type": "string" },
+        "salaryMonthly": { "type": "string" },
+        "verified": { "type": "boolean" }
+      },
+      "required": ["id", "studentName", "courseTaken"]
+    },
+    "Inquiry": {
+      "title": "Inquiry",
+      "description": "Admission inquiry lead from student",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "fullName": { "type": "string" },
+        "phone": { "type": "string" },
+        "whatsapp": { "type": "string" },
+        "courseId": { "type": "string" },
+        "status": { "type": "string" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["id", "fullName", "phone"]
+    }
+  },
+  "firestore": {
+    "/institute_config/{docId}": {
+      "schema": "InstituteInfo",
+      "description": "Global institute configuration and live details"
+    },
+    "/courses/{courseId}": {
+      "schema": "Course",
+      "description": "Course offerings and fee charts"
+    },
+    "/notices/{noticeId}": {
+      "schema": "Notice",
+      "description": "Announcements and alerts"
+    },
+    "/placements/{placementId}": {
+      "schema": "Placement",
+      "description": "Alumni placements and testimonials"
+    },
+    "/inquiries/{inquiryId}": {
+      "schema": "Inquiry",
+      "description": "Student admission inquiries"
+    }
+  }
+}

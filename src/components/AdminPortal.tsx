@@ -11,6 +11,10 @@ import { AdminOverviewTab } from './admin/AdminOverviewTab';
 import { AdminCertificatesTab } from './admin/AdminCertificatesTab';
 import { AdminBackupTab } from './admin/AdminBackupTab';
 import { motion } from 'motion/react';
+import { 
+  subscribeToCertificates, 
+  saveCertificatesToCloud 
+} from '../services/firebaseSync';
 
 interface AdminPortalProps {
   isOpen: boolean;
@@ -66,9 +70,18 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
     return INITIAL_CERTIFICATES;
   });
 
+  useEffect(() => {
+    const unsub = subscribeToCertificates((newCerts) => {
+      setCertificates(newCerts);
+      localStorage.setItem('nedian_verified_students', JSON.stringify(newCerts));
+    });
+    return () => unsub();
+  }, []);
+
   const handleUpdateCertificates = (newCertificates: StudentCertificateRecord[]) => {
     setCertificates(newCertificates);
     localStorage.setItem('nedian_verified_students', JSON.stringify(newCertificates));
+    saveCertificatesToCloud(newCertificates);
   };
 
   // Leads search and filter state
@@ -112,6 +125,7 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
   const [editAdmissionFee, setEditAdmissionFee] = useState<number>(800);
   const [editMonthlyFee, setEditMonthlyFee] = useState<number>(825);
   const [editDiscount, setEditDiscount] = useState<number>(10);
+  const [courseSavedMsg, setCourseSavedMsg] = useState('');
 
   // New Placement modal state
   const [showAddPlacement, setShowAddPlacement] = useState(false);
@@ -161,11 +175,14 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
   const handleSaveFullCourse = (e: React.FormEvent) => {
     e.preventDefault();
     if (!editingFullCourse) return;
+    const recalculatedTotal = Number(editingFullCourse.admissionFee) + (Number(editingFullCourse.monthlyFee) * Number(editingFullCourse.durationMonths));
     const updated = courses.map((c) =>
-      c.id === editingFullCourse.id ? editingFullCourse : c
+      c.id === editingFullCourse.id ? { ...editingFullCourse, totalFee: recalculatedTotal } : c
     );
     onUpdateCourses(updated);
     setEditingFullCourse(null);
+    setCourseSavedMsg(`Course "${editingFullCourse.name}" updated successfully!`);
+    setTimeout(() => setCourseSavedMsg(''), 4000);
   };
 
   const handleAddCourse = (e: React.FormEvent) => {
@@ -204,6 +221,8 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
 
     onUpdateCourses([...courses, newCourseObj]);
     setShowAddCourseModal(false);
+    setCourseSavedMsg(`Course "${newCourseName}" created successfully!`);
+    setTimeout(() => setCourseSavedMsg(''), 4000);
     // Reset
     setNewCourseCode('');
     setNewCourseName('');
@@ -213,9 +232,9 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
   };
 
   const handleDeleteCourse = (courseId: string) => {
-    if (window.confirm('Are you sure you want to permanently delete this course?')) {
-      onUpdateCourses(courses.filter((c) => c.id !== courseId));
-    }
+    onUpdateCourses(courses.filter((c) => c.id !== courseId));
+    setCourseSavedMsg('Course removed from syllabus.');
+    setTimeout(() => setCourseSavedMsg(''), 4000);
   };
 
   // Full Placement Edit State
@@ -285,17 +304,21 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
   const handleSaveCourseFee = (courseId: string) => {
     const updated = courses.map((c) => {
       if (c.id === courseId) {
+        const recalculatedTotal = Number(editAdmissionFee) + (Number(editMonthlyFee) * Number(c.durationMonths));
         return {
           ...c,
-          admissionFee: editAdmissionFee,
-          monthlyFee: editMonthlyFee,
-          fullPayDiscountPercent: editDiscount,
+          admissionFee: Number(editAdmissionFee),
+          monthlyFee: Number(editMonthlyFee),
+          fullPayDiscountPercent: Number(editDiscount),
+          totalFee: recalculatedTotal,
         };
       }
       return c;
     });
     onUpdateCourses(updated);
     setEditingCourseId(null);
+    setCourseSavedMsg('Course fees successfully updated! Live prospectus updated.');
+    setTimeout(() => setCourseSavedMsg(''), 4000);
   };
 
   const handleAddPlacement = (e: React.FormEvent) => {
@@ -1461,6 +1484,13 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
                       <span>+ Add New Course</span>
                     </button>
                   </div>
+
+                  {courseSavedMsg && (
+                    <div className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-emerald-50 border border-emerald-300 text-emerald-900 rounded-xl text-xs font-bold shadow-2xs">
+                      <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                      <span>{courseSavedMsg}</span>
+                    </div>
+                  )}
 
                   <div className="space-y-3">
                     {courses.map((course) => {

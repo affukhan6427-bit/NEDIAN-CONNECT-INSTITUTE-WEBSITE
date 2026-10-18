@@ -1,0 +1,49 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Helper function to validate ID
+    function isValidId(id) {
+      return id is string && id.size() > 0 && id.size() <= 128;
+    }
+
+    // Global institute profile and contacts
+    match /institute_config/{docId} {
+      allow read: if true;
+      allow write: if isValidId(docId);
+    }
+
+    // Course offerings and fee charts
+    match /courses/{courseId} {
+      allow read: if true;
+      allow write: if isValidId(courseId);
+    }
+
+    // Notices and alerts
+    match /notices/{noticeId} {
+      allow read: if true;
+      allow write: if isValidId(noticeId);
+    }
+
+    // Placements and alumni stories
+    match /placements/{placementId} {
+      allow read: if true;
+      allow write: if isValidId(placementId);
+    }
+
+    // Certificates records for verification
+    match /certificates/{certId} {
+      allow read: if true;
+      allow write: if isValidId(certId);
+    }
+
+    // Student admission inquiries
+    match /inquiries/{inquiryId} {
+      allow read, write: if isValidId(inquiryId);
+    }
+
+    // Connection check
+    match /test/{docId} {
+      allow read, write: if true;
+    }
+  }
+}

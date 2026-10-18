@@ -127,18 +127,55 @@ export const AdminBackupTab: React.FC<AdminBackupTabProps> = ({
     reader.readAsText(file);
   };
 
-  const handleResetDefaults = () => {
-    if (window.confirm('Warning: This will clear locally customized courses, inquiries, and restore institute defaults. Are you sure?')) {
-      localStorage.removeItem('nedian_courses');
-      localStorage.removeItem('nedian_placements');
-      localStorage.removeItem('nedian_notices');
-      localStorage.removeItem('nedian_inquiries');
-      localStorage.removeItem('nedian_verified_students');
-      setStatusMessage('Data reset to factory defaults. Refreshing...');
-      setTimeout(() => {
-        window.location.reload();
-      }, 1000);
+  const [confirmReset, setConfirmReset] = useState(false);
+
+  const handleExportTypeScriptCode = () => {
+    try {
+      const tsContent = `// Auto-generated Institute Data from Admin Portal
+import { Course, PlacementStory, InstituteNotice, StudentInquiry, InstituteInfo, StudentCertificateRecord, FaqItem } from '../types';
+
+export const DEFAULT_INSTITUTE_INFO: InstituteInfo = ${JSON.stringify(instituteInfo, null, 2)};
+
+export const INITIAL_COURSES: Course[] = ${JSON.stringify(courses, null, 2)};
+
+export const INITIAL_PLACEMENTS: PlacementStory[] = ${JSON.stringify(placements, null, 2)};
+
+export const INITIAL_NOTICES: InstituteNotice[] = ${JSON.stringify(notices, null, 2)};
+
+export const INITIAL_CERTIFICATES: StudentCertificateRecord[] = ${JSON.stringify(certificates, null, 2)};
+
+export const INITIAL_INQUIRIES: StudentInquiry[] = ${JSON.stringify(inquiries, null, 2)};
+`;
+
+      const blob = new Blob([tsContent], { type: 'text/typescript' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'instituteData.ts';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+
+      setStatusMessage('instituteData.ts generated! You can replace src/data/instituteData.ts with this file to make all changes permanent across all visitors on GitHub Pages.');
+      setTimeout(() => setStatusMessage(''), 8000);
+    } catch (err: any) {
+      setErrorMessage('Export failed: ' + err.message);
+      setTimeout(() => setErrorMessage(''), 4000);
     }
+  };
+
+  const handleResetDefaults = () => {
+    localStorage.removeItem('nedian_courses');
+    localStorage.removeItem('nedian_placements');
+    localStorage.removeItem('nedian_notices');
+    localStorage.removeItem('nedian_inquiries');
+    localStorage.removeItem('nedian_verified_students');
+    localStorage.removeItem('nedian_institute_info');
+    setStatusMessage('Data reset to factory defaults. Refreshing...');
+    setTimeout(() => {
+      window.location.reload();
+    }, 1000);
   };
 
   return (
@@ -196,39 +233,79 @@ export const AdminBackupTab: React.FC<AdminBackupTabProps> = ({
         </div>
       </div>
 
+      {/* Live GitHub Pages Sync Notice */}
+      <div className="bg-sky-50 p-4 rounded-2xl border border-sky-200 space-y-2 text-xs">
+        <div className="flex items-center gap-2 font-bold text-sky-950">
+          <HardDrive className="w-4 h-4 text-sky-700 shrink-0" />
+          <span>How Live Website Changes Work on GitHub Pages</span>
+        </div>
+        <p className="text-slate-700 leading-relaxed">
+          When you make changes in this Admin Portal, they are <strong>immediately active</strong> on this device in your browser's persistent storage. However, because GitHub Pages is a static hosting platform without a cloud database server, changes made on one phone/PC do not automatically push to other people's devices until the source code is built and deployed.
+        </p>
+        <p className="text-slate-600">
+          <strong>Tip for permanent global updates:</strong> You can download the updated <code>instituteData.ts</code> file below and push it to your GitHub repository, or simply ask us to update the course fees, phone number, or notice directly in the project codebase!
+        </p>
+      </div>
+
       {/* Backup & Restore Action Panels */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         
-        {/* Export Card */}
-        <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-2xs space-y-3">
-          <div className="w-10 h-10 rounded-xl bg-sky-50 text-sky-700 flex items-center justify-center border border-sky-100">
-            <Download className="w-5 h-5" />
-          </div>
-          <div>
-            <h5 className="font-bold text-slate-900 text-sm font-display">Export Complete Backup</h5>
-            <p className="text-xs text-slate-500 mt-0.5">
-              Download all student inquiries, customized fee packages, certificates, and alumni records in a single JSON file.
-            </p>
+        {/* Export JSON Card */}
+        <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-2xs space-y-3 flex flex-col justify-between">
+          <div className="space-y-3">
+            <div className="w-10 h-10 rounded-xl bg-sky-50 text-sky-700 flex items-center justify-center border border-sky-100">
+              <Download className="w-5 h-5" />
+            </div>
+            <div>
+              <h5 className="font-bold text-slate-900 text-sm font-display">Export Complete Backup</h5>
+              <p className="text-xs text-slate-500 mt-0.5">
+                Download all inquiries, customized fee packages, certificates, and alumni records in JSON format.
+              </p>
+            </div>
           </div>
           <button
             onClick={handleExportBackup}
             className="w-full py-2.5 px-4 text-xs font-bold text-white bg-sky-700 hover:bg-sky-800 rounded-xl shadow-xs transition-colors flex items-center justify-center gap-2 cursor-pointer"
           >
             <Download className="w-4 h-4" />
-            <span>Download Backup (.json)</span>
+            <span>Download JSON Backup</span>
+          </button>
+        </div>
+
+        {/* Export Code File Card */}
+        <div className="bg-white p-5 rounded-2xl border border-emerald-200 shadow-2xs space-y-3 flex flex-col justify-between">
+          <div className="space-y-3">
+            <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center border border-emerald-200">
+              <FileJson className="w-5 h-5" />
+            </div>
+            <div>
+              <h5 className="font-bold text-slate-900 text-sm font-display">Permanent Code File</h5>
+              <p className="text-xs text-slate-500 mt-0.5">
+                Download updated <code>instituteData.ts</code> with all your current edits to commit to GitHub for all visitors.
+              </p>
+            </div>
+          </div>
+          <button
+            onClick={handleExportTypeScriptCode}
+            className="w-full py-2.5 px-4 text-xs font-bold text-white bg-emerald-700 hover:bg-emerald-800 rounded-xl shadow-xs transition-colors flex items-center justify-center gap-2 cursor-pointer"
+          >
+            <Download className="w-4 h-4" />
+            <span>Download instituteData.ts</span>
           </button>
         </div>
 
         {/* Restore Card */}
-        <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-2xs space-y-3">
-          <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center border border-emerald-100">
-            <Upload className="w-5 h-5" />
-          </div>
-          <div>
-            <h5 className="font-bold text-slate-900 text-sm font-display">Restore from Backup</h5>
-            <p className="text-xs text-slate-500 mt-0.5">
-              Upload a previously exported institute JSON file to restore all admissions, fees, and certificate records.
-            </p>
+        <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-2xs space-y-3 flex flex-col justify-between">
+          <div className="space-y-3">
+            <div className="w-10 h-10 rounded-xl bg-slate-100 text-slate-700 flex items-center justify-center border border-slate-200">
+              <Upload className="w-5 h-5" />
+            </div>
+            <div>
+              <h5 className="font-bold text-slate-900 text-sm font-display">Restore from Backup</h5>
+              <p className="text-xs text-slate-500 mt-0.5">
+                Upload a previously exported institute JSON file to restore all admissions, fees, and certificates.
+              </p>
+            </div>
           </div>
           <label className="w-full py-2.5 px-4 text-xs font-bold text-slate-800 bg-slate-100 hover:bg-slate-200 border border-slate-300 rounded-xl transition-colors flex items-center justify-center gap-2 cursor-pointer">
             <Upload className="w-4 h-4 text-slate-600" />

@@ -19,6 +19,20 @@ import { AdminPortal } from './components/AdminPortal';
 import { VerifyCertificateModal } from './components/VerifyCertificateModal';
 import { GoogleDriveModal } from './components/GoogleDriveModal';
 import { ThemeProvider } from './context/ThemeContext';
+import { 
+  seedInitialDataIfEmpty,
+  subscribeToInstituteInfo,
+  subscribeToCourses,
+  subscribeToNotices,
+  subscribeToPlacements,
+  subscribeToInquiries,
+  saveInstituteInfoToCloud,
+  saveCoursesToCloud,
+  saveNoticesToCloud,
+  savePlacementsToCloud,
+  saveInquiriesToCloud,
+  submitInquiryToCloud
+} from './services/firebaseSync';
 
 export default function App() {
   // Institute Info state with local persistence
@@ -92,35 +106,79 @@ export default function App() {
   const [isDriveOpen, setIsDriveOpen] = useState(false);
   const [selectedCourseForInquiry, setSelectedCourseForInquiry] = useState<string>('ADCA');
 
-  // Persistence effects
+  // Real-time Cloud Firestore Subscriptions (Live sync across all phones & computers)
+  useEffect(() => {
+    seedInitialDataIfEmpty();
+
+    const unsubInfo = subscribeToInstituteInfo((newInfo) => {
+      setInstituteInfo(newInfo);
+      localStorage.setItem('nedian_institute_info', JSON.stringify(newInfo));
+    });
+
+    const unsubCourses = subscribeToCourses((newCourses) => {
+      setCourses(newCourses);
+      localStorage.setItem('nedian_courses', JSON.stringify(newCourses));
+    });
+
+    const unsubNotices = subscribeToNotices((newNotices) => {
+      setNotices(newNotices);
+      localStorage.setItem('nedian_notices', JSON.stringify(newNotices));
+    });
+
+    const unsubPlacements = subscribeToPlacements((newPlacements) => {
+      setPlacements(newPlacements);
+      localStorage.setItem('nedian_placements', JSON.stringify(newPlacements));
+    });
+
+    const unsubInquiries = subscribeToInquiries((newInquiries) => {
+      setInquiries(newInquiries);
+      localStorage.setItem('nedian_inquiries', JSON.stringify(newInquiries));
+    });
+
+    return () => {
+      unsubInfo();
+      unsubCourses();
+      unsubNotices();
+      unsubPlacements();
+      unsubInquiries();
+    };
+  }, []);
+
+  // Persistence & Cloud Synchronization effects
   const handleUpdateCourses = (newCourses: Course[]) => {
     setCourses(newCourses);
     localStorage.setItem('nedian_courses', JSON.stringify(newCourses));
+    saveCoursesToCloud(newCourses);
   };
 
   const handleUpdatePlacements = (newPlacements: PlacementStory[]) => {
     setPlacements(newPlacements);
     localStorage.setItem('nedian_placements', JSON.stringify(newPlacements));
+    savePlacementsToCloud(newPlacements);
   };
 
   const handleUpdateNotices = (newNotices: InstituteNotice[]) => {
     setNotices(newNotices);
     localStorage.setItem('nedian_notices', JSON.stringify(newNotices));
+    saveNoticesToCloud(newNotices);
   };
 
   const handleUpdateInquiries = (newInquiries: StudentInquiry[]) => {
     setInquiries(newInquiries);
     localStorage.setItem('nedian_inquiries', JSON.stringify(newInquiries));
+    saveInquiriesToCloud(newInquiries);
   };
 
   const handleUpdateInstituteInfo = (newInfo: InstituteInfo) => {
     setInstituteInfo(newInfo);
     localStorage.setItem('nedian_institute_info', JSON.stringify(newInfo));
+    saveInstituteInfoToCloud(newInfo);
   };
 
   const handleNewInquirySubmitted = (newInquiry: StudentInquiry) => {
     const updated = [newInquiry, ...inquiries];
     handleUpdateInquiries(updated);
+    submitInquiryToCloud(newInquiry);
   };
 
   const scrollToSection = (id: string) => {
